@@ -33,6 +33,8 @@ class RabbitMQInputDStream(
                             rabbitMQQueueName: Option[String],
                             rabbitMQHost: String,
                             rabbitMQPort: Int,
+                            rabbitMQUsername: String,
+                            rabbitMQPassword: String,
                             exchangeName: Option[String],
                             exchangeType: Option[String],
                             durable: Boolean,
@@ -46,6 +48,8 @@ class RabbitMQInputDStream(
     new RabbitMQReceiver(rabbitMQQueueName,
       Some(rabbitMQHost).getOrElse("localhost"),
       Some(rabbitMQPort).getOrElse(DefaultRabbitMQPort),
+      Some(rabbitMQUsername).getOrElse("guest"),
+      Some(rabbitMQPassword).getOrElse("guest"),
       exchangeName,
       exchangeType,
       durable,
@@ -58,6 +62,8 @@ private[receiver]
 class RabbitMQReceiver(rabbitMQQueueName: Option[String],
                        rabbitMQHost: String,
                        rabbitMQPort: Int,
+                       rabbitMQUsername: String,
+                       rabbitMQPassword: String,
                        exchangeName: Option[String],
                        exchangeType: Option[String],
                        durable: Boolean,
@@ -125,6 +131,8 @@ class RabbitMQReceiver(rabbitMQQueueName: Option[String],
     val factory: ConnectionFactory = new ConnectionFactory
     factory.setHost(rabbitMQHost)
     factory.setPort(rabbitMQPort)
+    factory.setUsername(rabbitMQUsername)
+    factory.setPassword(rabbitMQPassword)
     factory
   }
 }

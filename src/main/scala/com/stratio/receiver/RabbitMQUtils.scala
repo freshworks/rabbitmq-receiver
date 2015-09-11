@@ -30,12 +30,16 @@ object RabbitMQUtils {
    * @param ssc                StreamingContext object
    * @param rabbitMQHost       Url of remote RabbitMQ server
    * @param rabbitMQPort       Port of remote RabbitMQ server
+   * @param rabbitMQUsername   Username of RabbitMQ server
+   * @param rabbitMQPassword   Password of RabbitMQ server
    * @param rabbitMQQueueName  Queue to subscribe to
    * @param storageLevel       RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
    */
   def createStreamFromAQueue(ssc: StreamingContext,
                    rabbitMQHost: String,
                    rabbitMQPort: Int,
+                   rabbitMQUsername: String,
+                   rabbitMQPassword: String,
                    rabbitMQQueueName: String,
                    storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
                     ): ReceiverInputDStream[String] = {
@@ -44,6 +48,8 @@ object RabbitMQUtils {
       Some(rabbitMQQueueName),
       rabbitMQHost,
       rabbitMQPort,
+      rabbitMQUsername,
+      rabbitMQPassword,
       None,
       None,
       false,
@@ -56,31 +62,39 @@ object RabbitMQUtils {
    * @param jssc               JavaStreamingContext object
    * @param rabbitMQHost       Url of remote RabbitMQ server
    * @param rabbitMQPort       Port of remote RabbitMQ server
+   * @param rabbitMQUsername   Username of RabbitMQ server
+   * @param rabbitMQPassword   Password of RabbitMQ server
    * @param rabbitMQQueueName  Queue to subscribe to
    * @param storageLevel       RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
    */
   def createJavaStreamFromAQueue(jssc: JavaStreamingContext,
                    rabbitMQHost: String,
                    rabbitMQPort: Int,
+                   rabbitMQUsername: String,
+                   rabbitMQPassword: String,
                    rabbitMQQueueName: String,
                    storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
                     ): JavaReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    createStreamFromAQueue(jssc.ssc, rabbitMQHost, rabbitMQPort, rabbitMQQueueName)
+    createStreamFromAQueue(jssc.ssc, rabbitMQHost, rabbitMQPort,rabbitMQUsername,rabbitMQPassword, rabbitMQQueueName)
   }
 
   /**
    * Create an input stream that receives messages from a RabbitMQ queue.
-   * @param ssc              StreamingContext object
-   * @param rabbitMQHost     Url of remote RabbitMQ server
-   * @param rabbitMQPort     Port of remote RabbitMQ server
-   * @param exchangeName     Exchange name to subscribe to
-   * @param routingKeys      Routing keys to subscribe to
-   * @param storageLevel     RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
+   * @param ssc                StreamingContext object
+   * @param rabbitMQHost       Url of remote RabbitMQ server
+   * @param rabbitMQPort       Port of remote RabbitMQ server
+   * @param rabbitMQUsername   Username of RabbitMQ server
+   * @param rabbitMQPassword   Password of RabbitMQ server
+   * @param exchangeName       Exchange name to subscribe to
+   * @param routingKeys        Routing keys to subscribe to
+   * @param storageLevel       RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
    */
   def createStreamFromRoutingKeys(ssc: StreamingContext,
                    rabbitMQHost: String,
                    rabbitMQPort: Int,
+                   rabbitMQUsername: String,
+                   rabbitMQPassword: String,
                    exchangeName: String,
                    exchangeType: String = "direct",
                    durable: Boolean = false,
@@ -92,6 +106,8 @@ object RabbitMQUtils {
       None,
       rabbitMQHost,
       rabbitMQPort,
+      rabbitMQUsername,
+      rabbitMQPassword,
       Some(exchangeName),
       Some(exchangeType),
       durable,
@@ -101,16 +117,20 @@ object RabbitMQUtils {
 
   /**
    * Create an input stream that receives messages from a RabbitMQ queue.
-   * @param jssc             JavaStreamingContext object
-   * @param rabbitMQHost     Url of remote RabbitMQ server
-   * @param rabbitMQPort     Port of remote RabbitMQ server
-   * @param exchangeName     Exchange name to subscribe to
-   * @param routingKeys      Routing keys to subscribe to
-   * @param storageLevel     RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
+   * @param jssc               JavaStreamingContext object
+   * @param rabbitMQHost       Url of remote RabbitMQ server
+   * @param rabbitMQPort       Port of remote RabbitMQ server
+   * @param rabbitMQUsername   Username of RabbitMQ server
+   * @param rabbitMQPassword   Password of RabbitMQ server
+   * @param exchangeName       Exchange name to subscribe to
+   * @param routingKeys        Routing keys to subscribe to
+   * @param storageLevel       RDD storage level. Defaults to StorageLevel.MEMORY_AND_DISK_SER_2.
    */
   def createJavaStreamFromRoutingKeys(jssc: JavaStreamingContext,
                                   rabbitMQHost: String,
                                   rabbitMQPort: Int,
+                                  rabbitMQUsername: String,
+                                  rabbitMQPassword: String,
                                   exchangeName: String,
                                   exchangeType: String,
                                   durable: Boolean,
@@ -118,7 +138,7 @@ object RabbitMQUtils {
                                   storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER_2
                                    ): JavaReceiverInputDStream[String] = {
     implicitly[ClassTag[AnyRef]].asInstanceOf[ClassTag[String]]
-    createStreamFromRoutingKeys(jssc.ssc, rabbitMQHost, rabbitMQPort, exchangeName, exchangeType, durable, scala.collection.JavaConversions
+    createStreamFromRoutingKeys(jssc.ssc, rabbitMQHost, rabbitMQPort,rabbitMQUsername,rabbitMQPassword, exchangeName, exchangeType, durable, scala.collection.JavaConversions
       .asScalaBuffer(routingKeys), storageLevel)
   }
 }
